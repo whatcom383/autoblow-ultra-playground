@@ -168,6 +168,19 @@ app.post('/sync-script-upload', async (req, res) => {
     }
 });
 
+app.post('/sync-script-load-token', async (req, res) => {
+    try {
+        const {
+            token
+        } = req.body;
+        const state = await autoblow.syncScriptLoadToken(token);
+        res.json(state);
+    } catch (error) {
+        console.error("Error loading sync script with token:", error);
+        res.status(500).send("Failed to load sync script with token");
+    }
+});
+
 app.post('/sync-script-start', async (req, res) => {
     try {
         const state = await autoblow.syncScriptStart();

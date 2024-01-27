@@ -64,9 +64,31 @@
     <input type="url" id="funscriptUrl" name="funscriptUrl" required>
     <button type="submit">Upload Funscript</button>
 </form>
+
+<div id="syncScriptTokenContainer">
+  <p>Sync Script Token: <span id="syncScriptToken"></span></p>
+</div>
+
 <br><br>
 <button id="startSyncScript">Start Sync Script</button>
 <button id="stopSyncScript">Stop Sync Script</button>
+
+<div id="currentTimeContainer">
+  <p>Current Time: <span id="currentTime">0</span></p>
+</div>
+
+
+<h2>Set Alternate Sync Script</h2>
+<form id="alternateSyncScriptForm">
+    <label for="alternateSyncScriptToken">Sync Script Token:</label>
+    <input type="text" id="alternateSyncScriptToken" name="alternateSyncScriptToken" required>
+    <button type="submit">Set Sync Script</button>
+</form>
+<div id="syncScriptTokenContainer">
+    <p>Sync Script Token: <span id="alttSyncScriptToken"></span></p>
+</div>
+
+
 
 <br><br>
 

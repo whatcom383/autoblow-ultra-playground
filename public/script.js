@@ -1,7 +1,8 @@
 const videoInput = document.getElementById('videoInput');
 const videoPlayer = document.getElementById('videoPlayer');
 const playButton = document.getElementById('playButton');
-
+// Variable to keep track of the timer interval
+let currentTimeInterval;
 
 document.getElementById('tokenForm').addEventListener('submit', function(event) {
     event.preventDefault();
@@ -167,7 +168,20 @@ document.getElementById('syncScriptForm').addEventListener('submit', function(ev
         .then(response => response.json())
         .then(data => {
             console.log('Sync Script Uploaded:', data);
-            //window.location.reload(); // Add this line
+
+            // Extract the syncScriptToken from the response data
+            const syncScriptToken = data.syncScriptToken;
+
+            // Save the syncScriptToken to local storage
+            localStorage.setItem('syncScriptToken', syncScriptToken);
+
+            // Display the syncScriptToken in the container
+            const syncScriptTokenContainer = document.getElementById('syncScriptTokenContainer');
+            const syncScriptTokenElement = document.getElementById('syncScriptToken');
+            syncScriptTokenElement.textContent = syncScriptToken;
+
+            // Optionally, you can reload the page if needed
+            // window.location.reload();
         })
         .catch(error => {
             console.error('Error:', error);
@@ -175,13 +189,19 @@ document.getElementById('syncScriptForm').addEventListener('submit', function(ev
 });
 
 
+
+// Event listener for the 'Start Sync Script' button
 document.getElementById('startSyncScript').addEventListener('click', function() {
     if (videoPlayer.paused) {
         videoPlayer.play();
         playButton.textContent = 'Pause';
+        // Start the timer to update current time periodically
+        currentTimeInterval = setInterval(updateCurrentTime, 1000); // Update every second
     } else {
         videoPlayer.pause();
         playButton.textContent = 'Play';
+        // Stop the timer when the sync script is paused
+        clearInterval(currentTimeInterval);
     }
 
     fetch('/sync-script-start', {
@@ -190,14 +210,13 @@ document.getElementById('startSyncScript').addEventListener('click', function() 
         .then(response => response.json())
         .then(data => {
             console.log('Sync Script Started:', data);
-            //window.location.reload(); // Add this line if needed
         })
         .catch(error => {
             console.error('Error:', error);
         });
 });
 
-
+// Event listener for the 'Stop Sync Script' button
 document.getElementById('stopSyncScript').addEventListener('click', function() {
     if (videoPlayer.paused) {
         videoPlayer.play();
@@ -213,7 +232,8 @@ document.getElementById('stopSyncScript').addEventListener('click', function() {
         .then(response => response.json())
         .then(data => {
             console.log('Sync Script Stopped:', data);
-            //window.location.reload(); // Add this line if needed
+            // Stop the timer when the sync script is stopped
+            clearInterval(currentTimeInterval);
         })
         .catch(error => {
             console.error('Error:', error);
@@ -245,6 +265,44 @@ playButton.addEventListener('click', function() {
 
 
 
+// Update the event listener for the 'alternateSyncScriptForm'
+document.getElementById('alternateSyncScriptForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const alternateSyncScriptToken = document.getElementById('alternateSyncScriptToken').value;
+
+    // Send a POST request to the '/sync-script-load-token' endpoint
+    fetch('/sync-script-load-token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                token: alternateSyncScriptToken
+            }) // Send the token in the request body
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Alternate Sync Script Set:', data);
+            window.location.reload(); // Add this line if needed
+
+            localStorage.setItem('syncScriptToken', alternateSyncScriptToken);
+
+            // Extract the syncScriptToken from the response data
+            const altsyncScriptToken = data.syncScriptToken;
+
+            // Display the updated syncScriptToken in the container
+            const altSyncScriptTokenElement = document.getElementById('alttSyncScriptToken');
+            altSyncScriptTokenElement.textContent = altsyncScriptToken;
+        })
+        .catch(error => {
+            console.error('Error setting alternate sync script:', error);
+            // Optionally, display an error message or handle the error
+        });
+});
+
+
+
 
 window.onload = () => {
     const deviceToken = localStorage.getItem('deviceToken');
@@ -264,9 +322,35 @@ window.onload = () => {
         document.getElementById('speedIndex').value = speedIndex;
     }
 
+    // Load the last sync script token
+    const lastSyncScriptToken = localStorage.getItem('syncScriptToken');
+    if (lastSyncScriptToken !== null) {
+        const syncScriptTokenElement = document.getElementById('syncScriptToken');
+        syncScriptTokenElement.textContent = lastSyncScriptToken;
+    }
+
+    // Load the alternate sync script token if it exists in local storage
+    const alternateSyncScriptToken = localStorage.getItem('syncScriptToken');
+    if (alternateSyncScriptToken !== null) {
+        const alternateSyncScriptTokenInput = document.getElementById('alttSyncScriptToken');
+        alternateSyncScriptTokenInput.textContent = alternateSyncScriptToken;
+    }
 };
 
-
+// Function to update the displayed current time
+function updateCurrentTime() {
+    fetch('/state')
+        .then(response => response.json())
+        .then(state => {
+            const syncScriptCurrentTimeMs = state.syncScriptCurrentTime;
+            const syncScriptCurrentTimeSeconds = syncScriptCurrentTimeMs / 1000; // Convert milliseconds to seconds
+            const currentTimeElement = document.getElementById('currentTime');
+            currentTimeElement.textContent = syncScriptCurrentTimeSeconds.toFixed(2) + ' seconds'; // Display with two decimal places
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
 
 function requestLatency() {
     fetch('/latency')
