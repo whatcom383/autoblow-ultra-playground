@@ -2,7 +2,7 @@
 
 quick and dirty example api playground. using the autoblow-js-sdk (https://developers.autoblow.com/guides/autoblow-js-sdk/)
 
-You can load a local video, and a funscript from a url and play the script+video synced
+You can load a local video, and a funscript from a url and play the script+video synced.
 
 # installation
 `npm install @xsense/autoblow-sdk`
