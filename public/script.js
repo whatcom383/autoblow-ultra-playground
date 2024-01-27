@@ -1,6 +1,6 @@
 const videoInput = document.getElementById('videoInput');
 const videoPlayer = document.getElementById('videoPlayer');
-const playButton = document.getElementById('playButton');
+//const playButton = document.getElementById('playButton');
 // Variable to keep track of the timer interval
 let currentTimeInterval;
 
@@ -194,12 +194,12 @@ document.getElementById('syncScriptForm').addEventListener('submit', function(ev
 document.getElementById('startSyncScript').addEventListener('click', function() {
     if (videoPlayer.paused) {
         videoPlayer.play();
-        playButton.textContent = 'Pause';
+        //playButton.textContent = 'Pause';
         // Start the timer to update current time periodically
         currentTimeInterval = setInterval(updateCurrentTime, 1000); // Update every second
     } else {
         videoPlayer.pause();
-        playButton.textContent = 'Play';
+        //playButton.textContent = 'Play';
         // Stop the timer when the sync script is paused
         clearInterval(currentTimeInterval);
     }
@@ -220,10 +220,10 @@ document.getElementById('startSyncScript').addEventListener('click', function() 
 document.getElementById('stopSyncScript').addEventListener('click', function() {
     if (videoPlayer.paused) {
         videoPlayer.play();
-        playButton.textContent = 'Pause';
+        //playButton.textContent = 'Pause';
     } else {
         videoPlayer.pause();
-        playButton.textContent = 'Play';
+        //playButton.textContent = 'Play';
     }
 
     fetch('/sync-script-stop', {
