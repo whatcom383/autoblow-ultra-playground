@@ -253,15 +253,15 @@ videoInput.addEventListener('change', function(e) {
     }
 });
 
-playButton.addEventListener('click', function() {
-    if (videoPlayer.paused) {
-        videoPlayer.play();
-        playButton.textContent = 'Pause';
-    } else {
-        videoPlayer.pause();
-        playButton.textContent = 'Play';
-    }
-});
+//playButton.addEventListener('click', function() {
+//    if (videoPlayer.paused) {
+//        videoPlayer.play();
+//        playButton.textContent = 'Pause';
+//    } else {
+//        videoPlayer.pause();
+//        playButton.textContent = 'Play';
+//    }
+//});
 
 
 
