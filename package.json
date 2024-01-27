@@ -1,0 +1,29 @@
+{
+  "name": "autoblow-ultra-playground",
+  "version": "1.0.0",
+  "description": "quick and dirty example api playground",
+  "main": "app.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whatcom383/autoblow-ultra-playground.git"
+  },
+  "keywords": [
+    "autoblow",
+    "autoblow",
+    "AI",
+    "ULTRA"
+  ],
+  "author": "whatcom383",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/whatcom383/autoblow-ultra-playground/issues"
+  },
+  "homepage": "https://github.com/whatcom383/autoblow-ultra-playground#readme",
+  "dependencies": {
+    "@xsense/autoblow-sdk": "^1.0.4",
+    "node-fetch": "^3.3.2"
+  }
+}
