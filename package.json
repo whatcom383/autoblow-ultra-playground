@@ -24,6 +24,7 @@
   "homepage": "https://github.com/whatcom383/autoblow-ultra-playground#readme",
   "dependencies": {
     "@xsense/autoblow-sdk": "^1.0.4",
+    "express": "^4.18.2",
     "node-fetch": "^3.3.2"
   }
 }
