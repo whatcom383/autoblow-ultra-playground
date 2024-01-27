@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Initialize Device</title>
+</head>
+<body>
+    <h1>Enter Device Token</h1>
+    <form id="tokenForm">
+        <label for="deviceToken">Device Token:</label>
+        <input type="text" id="deviceToken" name="deviceToken" required>
+        <button type="submit">Initialize</button>
+    </form>
+    <div id="response"></div>
+
+    <div id="info"></div>
+    <div id="state"></div><br><br>
+
+    connectionInfo:
+    <div id="connectionInfo"></div><br><br>
+
+    <button onclick="requestLatency()">Request Latency</button>
+    <div id="latency"></div><br><br>
+
+    <button onclick="displayConnectedCluster()">Display Connected Cluster</button>
+    <div id="connectedCluster"></div><br><br>
+
+    <form id="localScriptForm">
+      <label for="localScriptIndex">Local Script Number:</label>
+      <input type="number" id="localScriptIndex" name="localScriptIndex" required>
+      <label for="speedIndex">Speed Index:</label>
+      <input type="number" id="speedIndex" name="speedIndex" required>
+      <button type="submit">Set Local Script</button>
+  </form>
+  <br><br>
+  <button id="startLocalScript">Start Local Script</button>
+<button id="stopLocalScript">Stop Local Script</button>
+
+
+<h2>Oscillation Settings</h2>
+<form id="oscillationForm">
+    <label for="oscillationSpeed">Speed:</label>
+    <input type="number" id="oscillationSpeed" name="oscillationSpeed" required>
+
+    <label for="minY">Min Y:</label>
+    <input type="number" id="minY" name="minY" required>
+
+    <label for="maxY">Max Y:</label>
+    <input type="number" id="maxY" name="maxY" required>
+
+    <button type="submit">Set Oscillation</button>
+</form>
+
+<br><br>
+
+    <button onclick="startOscillation()">Start Oscillation</button><br><br>
+    <button onclick="stopOscillation()">Stop Oscillation</button><br><br>
+
+    <br><br>
+
+
+    <h2>Sync Script Upload</h2>
+<form id="syncScriptForm">
+    <label for="funscriptUrl">Funscript URL:</label>
+    <input type="url" id="funscriptUrl" name="funscriptUrl" required>
+    <button type="submit">Upload Funscript</button>
+</form>
+<br><br>
+<button id="startSyncScript">Start Sync Script</button>
+<button id="stopSyncScript">Stop Sync Script</button>
+
+<br><br>
+
+<h1>Load and Play Local Video</h1>
+    <input type="file" id="videoInput" accept="video/*">
+    <video id="videoPlayer" width="640" height="360">
+        Your browser does not support the video tag.
+    </video>
+    <button id="playButton">Play</button>
+
+
+    <script src="script.js"></script>
+</body>
+</html>
