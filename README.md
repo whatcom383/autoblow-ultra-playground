@@ -1,5 +1,7 @@
 # autoblow-ultra-playground
 
+This is for the Autoblow AI ULTRA - The best AI Based Blowjob machine ever made - check it out here https://s.outspokentoys.com/autoblow-ai-ultra
+
 quick and dirty example api playground. using the autoblow-js-sdk (https://developers.autoblow.com/guides/autoblow-js-sdk/)
 
 You can load a local video, and a funscript from a url and play the script+video synced.
