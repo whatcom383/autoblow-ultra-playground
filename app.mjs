@@ -1,11 +1,13 @@
 import express from 'express';
-import {
-    Autoblow
-} from '@xsense/autoblow-sdk';
+import { Autoblow } from '@xsense/autoblow-sdk';
 import fetch from 'node-fetch';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 global.fetch = fetch;
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.static('public')); // Serve static files from 'public' directory
@@ -15,9 +17,7 @@ const autoblow = new Autoblow();
 app.post('/init', async (req, res) => {
     try {
         // Assuming the device token is sent in the request body
-        const {
-            deviceId
-        } = req.body;
+        const { deviceId } = req.body;
 
         // Initialize the device with the provided token
         await autoblow.init(deviceId);
@@ -50,9 +50,7 @@ app.get('/state', async (req, res) => {
 app.get('/latency', async (req, res) => {
     try {
         const latency = await autoblow.estimateLatency();
-        res.json({
-            latency
-        });
+        res.json({ latency });
     } catch (error) {
         console.error("Error estimating latency:", error);
         res.status(500).send("Failed to estimate latency");
@@ -83,9 +81,7 @@ app.post('/oscillate-stop', async (req, res) => {
 app.get('/connected-cluster', async (req, res) => {
     try {
         const connectedCluster = autoblow.getConnectedCluster();
-        res.json({
-            connectedCluster
-        });
+        res.json({ connectedCluster });
     } catch (error) {
         console.error("Error getting connected cluster:", error);
         res.status(500).send("Failed to get connected cluster");
@@ -95,9 +91,7 @@ app.get('/connected-cluster', async (req, res) => {
 
 app.post('/connection-info', async (req, res) => {
     try {
-        const {
-            deviceId
-        } = req.body;
+        const { deviceId } = req.body;
         const connectionInfo = await autoblow.getConnectionInfo(deviceId);
         res.json(connectionInfo);
     } catch (error) {
@@ -108,10 +102,7 @@ app.post('/connection-info', async (req, res) => {
 
 app.post('/local-script-set', async (req, res) => {
     try {
-        const {
-            localScriptIndex,
-            speedIndex
-        } = req.body;
+        const { localScriptIndex, speedIndex } = req.body;
         const state = await autoblow.localScriptSet(localScriptIndex, speedIndex);
         res.json(state);
     } catch (error) {
@@ -142,11 +133,7 @@ app.post('/local-script-stop', async (req, res) => {
 
 app.post('/oscillate-set', async (req, res) => {
     try {
-        const {
-            speed,
-            minY,
-            maxY
-        } = req.body;
+        const { speed, minY, maxY } = req.body;
         const state = await autoblow.oscillateSet(speed, minY, maxY);
         res.json(state);
     } catch (error) {
@@ -157,9 +144,7 @@ app.post('/oscillate-set', async (req, res) => {
 
 app.post('/sync-script-upload', async (req, res) => {
     try {
-        const {
-            funscriptUrl
-        } = req.body;
+        const { funscriptUrl } = req.body;
         const state = await autoblow.syncScriptUploadFunscriptUrl(funscriptUrl);
         res.json(state);
     } catch (error) {
@@ -170,9 +155,7 @@ app.post('/sync-script-upload', async (req, res) => {
 
 app.post('/sync-script-load-token', async (req, res) => {
     try {
-        const {
-            token
-        } = req.body;
+        const { token } = req.body;
         const state = await autoblow.syncScriptLoadToken(token);
         res.json(state);
     } catch (error) {
@@ -205,5 +188,5 @@ app.post('/sync-script-stop', async (req, res) => {
 
 
 app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });

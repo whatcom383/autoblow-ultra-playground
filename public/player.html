@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Video Player</title>
+</head>
+<body>
+    <h1>Load and Play Local Video</h1>
+    <input type="file" id="videoInput" accept="video/*">
+    <video id="videoPlayer" width="640" height="360">
+        Your browser does not support the video tag.
+    </video>
+    <button id="playButton">Play</button>
+
+    <script>
+        const videoInput = document.getElementById('videoInput');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const playButton = document.getElementById('playButton');
+
+        videoInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+
+            if (file) {
+                const objectURL = URL.createObjectURL(file);
+                videoPlayer.src = objectURL;
+            } else {
+                videoPlayer.src = '';
+            }
+        });
+
+        playButton.addEventListener('click', function () {
+            if (videoPlayer.paused) {
+                videoPlayer.play();
+                playButton.textContent = 'Pause';
+            } else {
+                videoPlayer.pause();
+                playButton.textContent = 'Play';
+            }
+        });
+    </script>
+</body>
+</html>
