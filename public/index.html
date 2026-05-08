@@ -1,104 +1,346 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Initialize Device</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoblow AI Control Center</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Enter Device Token</h1>
-    <form id="tokenForm">
-        <label for="deviceToken">Device Token:</label>
-        <input type="text" id="deviceToken" name="deviceToken" required>
-        <button type="submit">Initialize</button>
-    </form>
-    <div id="response"></div>
+    <div id="response" class="alert"></div>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">AI</div>
+                <div class="brand-text">Autoblow<span>Ultra</span></div>
+            </div>
+            <nav class="nav">
+                <a href="#dashboard" class="nav-item active" data-section="dashboard">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                    Dashboard
+                </a>
+                <a href="#video" class="nav-item" data-section="video">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    Video Sync
+                </a>
+                <a href="#manual" class="nav-item" data-section="manual">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                    Manual Control
+                </a>
+                <a href="#settings" class="nav-item" data-section="settings">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    Settings
+                </a>
+            </nav>
+            <div class="connection-status">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Disconnected</span>
+            </div>
+        </aside>
 
-    <div id="info"></div>
-    <div id="state"></div><br><br>
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Header -->
+            <header class="header">
+                <h1 id="pageTitle">Dashboard</h1>
+                <div class="header-actions">
+                    <button class="btn btn-ghost" id="refreshBtn">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                        Refresh
+                    </button>
+                    <div id="apiErrorBadge" class="error-badge" style="display:none">0</div>
+                </div>
+            </header>
 
-    connectionInfo:
-    <div id="connectionInfo"></div><br><br>
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <!-- Device Token Card -->
+                <div class="card card-full">
+                    <div class="card-header">
+                        <h2>Device Connection</h2>
+                        <p>Enter your Autoblow device token to connect</p>
+                    </div>
+                    <form id="tokenForm" class="inline-form">
+                        <div class="input-group">
+                            <label for="deviceToken">Device Token</label>
+                            <input type="text" id="deviceToken" placeholder="Paste your device token here..." required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Connect Device</button>
+                    </form>
+                </div>
 
-    <button onclick="requestLatency()">Request Latency</button>
-    <div id="latency"></div><br><br>
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Latency</span>
+                            <span class="stat-value" id="latency">-- ms</span>
+                        </div>
+                        <button class="btn btn-sm btn-ghost" onclick="requestLatency()">Test</button>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Connected Cluster</span>
+                            <span class="stat-value" id="connectedCluster">--</span>
+                        </div>
+                        <button class="btn btn-sm btn-ghost" onclick="displayConnectedCluster()">Check</button>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Sync Time</span>
+                            <span class="stat-value" id="currentTime">0.00s</span>
+                        </div>
+                    </div>
+                </div>
 
-    <button onclick="displayConnectedCluster()">Display Connected Cluster</button>
-    <div id="connectedCluster"></div><br><br>
+                <!-- Device Info -->
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Device Info</h3>
+                        </div>
+                        <pre id="info" class="json-display">Connect a device to see info...</pre>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Device State</h3>
+                        </div>
+                        <pre id="state" class="json-display">Connect a device to see state...</pre>
+                    </div>
+                    <div class="card card-full">
+                        <div class="card-header">
+                            <h3>Connection Info</h3>
+                        </div>
+                        <pre id="connectionInfo" class="json-display">Connect a device to see connection info...</pre>
+                    </div>
+                </div>
+            </section>
 
-    <form id="localScriptForm">
-      <label for="localScriptIndex">Local Script Number:</label>
-      <input type="number" id="localScriptIndex" name="localScriptIndex" required>
-      <label for="speedIndex">Speed Index:</label>
-      <input type="number" id="speedIndex" name="speedIndex" required>
-      <button type="submit">Set Local Script</button>
-  </form>
-  <br><br>
-  <button id="startLocalScript">Start Local Script</button>
-<button id="stopLocalScript">Stop Local Script</button>
+            <!-- Video Sync Section -->
+            <section id="video" class="section">
+                <div class="card card-full">
+                    <div class="card-header">
+                        <h2>Video Player & Script Sync</h2>
+                        <p>Load a video and sync with a funscript for automated stroking</p>
+                    </div>
 
+                    <div class="video-area">
+                        <div class="video-container">
+                            <video id="videoPlayer" controls>
+                                <source src="" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div class="video-overlay" id="videoOverlay">
+                                <div class="upload-prompt">
+                                    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                    <p>Drop video + .funscript here or click to browse</p>
+                                    <input type="file" id="videoInput" accept="video/*,.funscript" multiple>
+                                </div>
+                            </div>
+                        </div>
 
-<h2>Oscillation Settings</h2>
-<form id="oscillationForm">
-    <label for="oscillationSpeed">Speed:</label>
-    <input type="number" id="oscillationSpeed" name="oscillationSpeed" required>
+                        <div class="sync-controls">
+                            <div class="control-group">
+                                <h4>Funscript Source</h4>
+                                <form id="syncScriptForm" class="stack-form">
+                                    <div class="input-group">
+                                        <label for="funscriptUrl">Funscript URL</label>
+                                        <input type="url" id="funscriptUrl" placeholder="https://example.com/script.funscript">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Upload & Load</button>
+                                </form>
+                                <div class="file-upload" style="margin-top:12px">
+                                    <label for="funscriptFile" class="btn btn-secondary" style="width:100%;justify-content:center">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                        Or upload .funscript file
+                                    </label>
+                                    <input type="file" id="funscriptFile" accept=".funscript,application/json" style="display:none">
+                                </div>
+                            </div>
 
-    <label for="minY">Min Y:</label>
-    <input type="number" id="minY" name="minY" required>
+                            <div class="control-group">
+                                <h4>Or Load by Token</h4>
+                                <form id="alternateSyncScriptForm" class="stack-form">
+                                    <div class="input-group">
+                                        <label for="alternateSyncScriptToken">Script Token</label>
+                                        <input type="text" id="alternateSyncScriptToken" placeholder="Paste script token...">
+                                    </div>
+                                    <button type="submit" class="btn btn-secondary">Load Token</button>
+                                </form>
+                            </div>
 
-    <label for="maxY">Max Y:</label>
-    <input type="number" id="maxY" name="maxY" required>
+                            <div class="token-display">
+                                <span class="token-label">Active Token:</span>
+                                <span class="token-value" id="syncScriptToken">None</span>
+                            </div>
 
-    <button type="submit">Set Oscillation</button>
-</form>
+                            <div class="btn-group">
+                                <button id="startSyncScript" class="btn btn-primary btn-lg">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    Start Sync
+                                </button>
+                                <button id="stopSyncScript" class="btn btn-danger btn-lg">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+                                    Stop Sync
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-<br><br>
+            <!-- Manual Control Section -->
+            <section id="manual" class="section">
+                <div class="card-grid">
+                    <!-- Oscillation -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Oscillation</h2>
+                            <p>Continuous automated motion</p>
+                        </div>
+                        <form id="oscillationForm" class="stack-form">
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label for="oscillationSpeed">Speed</label>
+                                    <input type="number" id="oscillationSpeed" min="0" max="100" value="50">
+                                </div>
+                                <div class="input-group">
+                                    <label for="minY">Min Y</label>
+                                    <input type="number" id="minY" min="0" max="100" value="0">
+                                </div>
+                                <div class="input-group">
+                                    <label for="maxY">Max Y</label>
+                                    <input type="number" id="maxY" min="0" max="100" value="100">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-secondary">Apply Settings</button>
+                        </form>
+                        <div class="btn-group">
+                            <button onclick="startOscillation()" class="btn btn-primary">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                Start
+                            </button>
+                            <button onclick="stopOscillation()" class="btn btn-danger">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+                                Stop
+                            </button>
+                        </div>
+                    </div>
 
-    <button onclick="startOscillation()">Start Oscillation</button><br><br>
-    <button onclick="stopOscillation()">Stop Oscillation</button><br><br>
+                    <!-- Local Script -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Local Script</h2>
+                            <p>Pre-programmed motion patterns</p>
+                        </div>
+                        <form id="localScriptForm" class="stack-form">
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label for="localScriptIndex">Script #</label>
+                                    <input type="number" id="localScriptIndex" min="0" value="0">
+                                </div>
+                                <div class="input-group">
+                                    <label for="speedIndex">Speed</label>
+                                    <input type="number" id="speedIndex" min="0" max="10" value="5">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-secondary">Load Script</button>
+                        </form>
+                        <div class="btn-group">
+                            <button id="startLocalScript" class="btn btn-primary">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                Start
+                            </button>
+                            <button id="stopLocalScript" class="btn btn-danger">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+                                Stop
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-    <br><br>
+            <!-- Settings Section -->
+            <section id="settings" class="section">
+                <div class="card-grid">
+                    <div class="card card-narrow">
+                        <div class="card-header">
+                            <h2>Preferences</h2>
+                            <p>Manage saved settings</p>
+                        </div>
+                        <div class="settings-list">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <span class="setting-name">Saved Device Token</span>
+                                    <span class="setting-value" id="savedToken">None</span>
+                                </div>
+                                <button class="btn btn-sm btn-ghost" onclick="clearToken()">Clear</button>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <span class="setting-name">Saved Script Token</span>
+                                    <span class="setting-value" id="savedScriptToken">None</span>
+                                </div>
+                                <button class="btn btn-sm btn-ghost" onclick="clearScriptToken()">Clear</button>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <span class="setting-name">Auto-refresh State</span>
+                                    <span class="setting-value">Enabled (1s)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-
-    <h2>Sync Script Upload</h2>
-<form id="syncScriptForm">
-    <label for="funscriptUrl">Funscript URL:</label>
-    <input type="url" id="funscriptUrl" name="funscriptUrl" required>
-    <button type="submit">Upload Funscript</button>
-</form>
-
-<div id="syncScriptTokenContainer">
-  <p>Sync Script Token: <span id="syncScriptToken"></span></p>
-</div>
-
-<br><br>
-<button id="startSyncScript">Start Sync Script</button>
-<button id="stopSyncScript">Stop Sync Script</button>
-
-<div id="currentTimeContainer">
-  <p>Current Time: <span id="currentTime">0</span></p>
-</div>
-
-
-<h2>Set Alternate Sync Script</h2>
-<form id="alternateSyncScriptForm">
-    <label for="alternateSyncScriptToken">Sync Script Token:</label>
-    <input type="text" id="alternateSyncScriptToken" name="alternateSyncScriptToken" required>
-    <button type="submit">Set Sync Script</button>
-</form>
-<div id="syncScriptTokenContainer">
-    <p>Sync Script Token: <span id="alttSyncScriptToken"></span></p>
-</div>
-
-
-
-<br><br>
-
-<h1>Load and Play Local Video</h1>
-    <input type="file" id="videoInput" accept="video/*">
-    <video id="videoPlayer" width="640" height="360">
-        Your browser does not support the video tag.
-    </video>
-    <button id="playButton">Play</button>
-
+                    <div class="card card-full">
+                        <div class="card-header">
+                            <h2>Device Diagnostics</h2>
+                            <p>All available device data from the API</p>
+                            <button class="btn btn-sm btn-ghost" onclick="refreshDiagnostics()">Refresh</button>
+                        </div>
+                        <div class="diag-grid">
+                            <div class="diag-card">
+                                <h4>Device Info</h4>
+                                <pre id="diagInfo">Not connected</pre>
+                            </div>
+                            <div class="diag-card">
+                                <h4>Device State</h4>
+                                <pre id="diagState">Not connected</pre>
+                            </div>
+                            <div class="diag-card">
+                                <h4>Connection Info</h4>
+                                <pre id="diagConnection">Not connected</pre>
+                            </div>
+                            <div class="diag-card">
+                                <h4>Latency</h4>
+                                <pre id="diagLatency">--</pre>
+                            </div>
+                            <div class="diag-card">
+                                <h4>Connected Cluster</h4>
+                                <pre id="diagCluster">--</pre>
+                            </div>
+                            <div class="diag-card">
+                                <h4>Loaded Local Scripts</h4>
+                                <pre id="diagScripts">--</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
 
     <script src="script.js"></script>
 </body>

@@ -14,6 +14,26 @@ app.use(express.static('public')); // Serve static files from 'public' directory
 
 const autoblow = new Autoblow();
 
+// Auto-initialize from .env if DEVICE_TOKEN is set
+const autoDeviceToken = process.env.DEVICE_TOKEN || null;
+if (autoDeviceToken) {
+    try {
+        await autoblow.init(autoDeviceToken);
+        console.log(`Auto-initialized device with token from .env`);
+    } catch (error) {
+        console.error("Auto-init failed:", error);
+    }
+}
+
+app.get('/init-status', async (req, res) => {
+    try {
+        const info = await autoblow.getInfo();
+        res.json({ initialized: true, deviceId: autoDeviceToken });
+    } catch (error) {
+        res.json({ initialized: false, deviceId: null });
+    }
+});
+
 app.post('/init', async (req, res) => {
     try {
         // Assuming the device token is sent in the request body
@@ -131,6 +151,16 @@ app.post('/local-script-stop', async (req, res) => {
     }
 });
 
+app.get('/local-script-list', async (req, res) => {
+    try {
+        const scripts = await autoblow.localScriptList();
+        res.json({ scripts });
+    } catch (error) {
+        console.error("Error listing local scripts:", error);
+        res.status(500).send("Failed to list local scripts");
+    }
+});
+
 app.post('/oscillate-set', async (req, res) => {
     try {
         const { speed, minY, maxY } = req.body;
@@ -153,6 +183,17 @@ app.post('/sync-script-upload', async (req, res) => {
     }
 });
 
+app.post('/sync-script-upload-file', async (req, res) => {
+    try {
+        const funscript = req.body;
+        const state = await autoblow.syncScriptUploadFunscriptFile(funscript);
+        res.json(state);
+    } catch (error) {
+        console.error("Error uploading funscript file:", error);
+        res.status(500).send("Failed to upload funscript file");
+    }
+});
+
 app.post('/sync-script-load-token', async (req, res) => {
     try {
         const { token } = req.body;
@@ -166,11 +207,24 @@ app.post('/sync-script-load-token', async (req, res) => {
 
 app.post('/sync-script-start', async (req, res) => {
     try {
-        const state = await autoblow.syncScriptStart();
+        const { startTimeMs = 0 } = req.body;
+        const state = await autoblow.syncScriptStart(startTimeMs);
         res.json(state);
     } catch (error) {
         console.error("Error starting sync script:", error);
         res.status(500).send("Failed to start sync script");
+    }
+});
+
+app.post('/sync-script-seek', async (req, res) => {
+    try {
+        const { timeMs } = req.body;
+        await autoblow.syncScriptStop();
+        const state = await autoblow.syncScriptStart(timeMs);
+        res.json(state);
+    } catch (error) {
+        console.error("Error seeking sync script:", error);
+        res.status(500).send("Failed to seek sync script");
     }
 });
 
